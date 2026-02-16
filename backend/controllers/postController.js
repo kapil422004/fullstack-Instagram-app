@@ -232,7 +232,7 @@ export const deletePost = async (req, res) => {
     //remove postid from userModel
     const user = await User.findById(authorId);
 
-    user.posts = user.posts.filter((id) => id.toString() !== postId);
+    user.posts = user.posts.filter((post) => post.toString() !== postId);
 
     await user.save();
 

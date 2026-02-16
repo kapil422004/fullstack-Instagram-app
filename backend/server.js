@@ -4,7 +4,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import dbconnect from "./utils/dbconnect.js";
 import userRouter from "./routes/userRoutes.js";
-import postRouter from "./routes/postRouters.js";
+import postRouter from "./routes/postRoutes.js";
+import messageRouter from "./routes/messageRoutes.js";
 
 const app = express();
 
@@ -20,14 +21,15 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-dbconnect()
+dbconnect();
 
-app.use("/api/v1/user", userRouter)
-app.use("/api/v1/post", postRouter)
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/post", postRouter);
+app.use("/api/v1/message", messageRouter);
 
-app.get(('/'),(req,res ) => {
-  return res.send("Hello")
-})
+app.get("/", (req, res) => {
+  return res.send("Hello");
+});
 
 app.listen(PORT, () => {
   console.log(`App is live on ${PORT}`);

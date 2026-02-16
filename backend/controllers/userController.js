@@ -3,6 +3,7 @@ import { User } from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
+import { Post } from "../models/postModel.js";
 
 export const register = async (req, res) => {
   try {
@@ -60,7 +61,7 @@ export const login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate('posts')
 
     if (!user) {
       return res.status(404).json({
@@ -70,6 +71,7 @@ export const login = async (req, res) => {
     }
 
     // console.log(user.password)
+
     const checkPassword = await bcrypt.compare(password, user.password);
 
     if (!checkPassword) {
@@ -100,7 +102,7 @@ export const login = async (req, res) => {
       bio: user.bio,
       followers: user.followers,
       following: user.following,
-      post: user.posts,
+      posts: user.posts,
       //   bookmarks:user.bookmarks
     });
   } catch (error) {
