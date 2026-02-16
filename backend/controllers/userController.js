@@ -63,7 +63,7 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.json(404).json({
+      return res.status(404).json({
         success: false,
         message: "Email is not registered.",
       });
@@ -100,7 +100,7 @@ export const login = async (req, res) => {
       bio: user.bio,
       followers: user.followers,
       following: user.following,
-      post: user.post,
+      post: user.posts,
       //   bookmarks:user.bookmarks
     });
   } catch (error) {
@@ -148,10 +148,10 @@ export const editProfile = async (req, res) => {
 
     if (profilePicture) {
       const fileUri = getDataUri(profilePicture);
-      cloudResponse = await cloudinary.uploder.upload(fileUri);
+      cloudResponse = await cloudinary.uploader.upload(fileUri);
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select("-password");
 
     if (!user) {
       return res.status(404).json({

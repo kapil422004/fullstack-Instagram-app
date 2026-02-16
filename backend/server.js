@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import dbconnect from "./utils/dbconnect.js";
 import userRouter from "./routes/userRoutes.js";
+import postRouter from "./routes/postRouters.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 dbconnect()
 
 app.use("/api/v1/user", userRouter)
+app.use("/api/v1/post", postRouter)
 
 app.get(('/'),(req,res ) => {
   return res.send("Hello")
