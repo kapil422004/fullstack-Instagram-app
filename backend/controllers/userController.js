@@ -61,7 +61,8 @@ export const login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email }).populate('posts')
+    let user = await User.findOne({ email }).populate("posts");
+    // console.log(user)
 
     if (!user) {
       return res.status(404).json({
@@ -70,7 +71,6 @@ export const login = async (req, res) => {
       });
     }
 
-    // console.log(user.password)
 
     const checkPassword = await bcrypt.compare(password, user.password);
 
@@ -92,9 +92,8 @@ export const login = async (req, res) => {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
-    return res.status(200).json({
-      success: true,
-      message: `Welcome back ${user.userName}`,
+
+    user = {
       _id: user._id,
       userName: user.userName,
       email: user.email,
@@ -104,6 +103,13 @@ export const login = async (req, res) => {
       following: user.following,
       posts: user.posts,
       //   bookmarks:user.bookmarks
+
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Welcome back ${user.userName}`,
+      user
     });
   } catch (error) {
     console.log(error);
@@ -140,8 +146,8 @@ export const getProfile = async (req, res) => {
 
 export const editProfile = async (req, res) => {
   try {
+    
     //id from middleware
-
     const userId = req.id;
     const { bio, gender } = req.body;
     const profilePicture = req.file;
