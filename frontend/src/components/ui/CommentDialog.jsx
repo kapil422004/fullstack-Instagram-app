@@ -7,12 +7,13 @@ import { Button } from "./button";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "sonner";
-import { setRefresh } from "@/redux/postSlice";
+import { setPosts, setRefresh } from "@/redux/postSlice";
+import Comment from "../Comment";
 
-const CommentDialog = ({ open, setOpen, post }) => {
+const CommentDialog = ({ post, open, setOpen }) => {
   const [text, setText] = useState("");
-  const { authUser } = useSelector((store) => store.authUser);
-  // const {post} = useSelector((store) => store.posts)
+  const { authUser } = useSelector((store) => store.users);
+  const { posts } = useSelector((store) => store.posts);
   const dispatch = useDispatch();
   const backendPostUrl = import.meta.env.VITE_backendPostUrl;
 
@@ -35,8 +36,18 @@ const CommentDialog = ({ open, setOpen, post }) => {
       if (res.data.success) {
         console.log(res);
         toast.success(res.data.message);
+        // setOpen(false)
         setText("");
-        dispatch(setRefresh());
+        const updatePost = posts.map((p) => {
+          return p._id === post._id
+            ? {
+                ...p,
+                comments: [...p.comments, res.data.comment],
+              }
+            : p;
+        });
+        dispatch(setPosts(updatePost));
+        // dispatch(setRefresh());
       }
     } catch (error) {
       console.log(error);
@@ -65,14 +76,14 @@ const CommentDialog = ({ open, setOpen, post }) => {
                 <Link>
                   <Avatar>
                     <AvatarImage
-                      src={authUser.profilePicture}
+                      src={authUser?.profilePicture}
                       className="object-cover"
                     />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                 </Link>
                 <div>
-                  <Link className="text-md ">{authUser.userName} </Link>
+                  <Link className="text-md ">{authUser?.userName} </Link>
                 </div>
               </div>
               <Dialog>
@@ -91,7 +102,9 @@ const CommentDialog = ({ open, setOpen, post }) => {
             </div>
             <hr />
             <div className="flex-1 overflow-y-auto max-h-96 p-4">
-              comments here
+              {post?.comments.map((comment) => (
+                <Comment key={comment._id} comment={comment} />
+              ))}
             </div>
             <div className="p-4">
               <div className="flex items-center gap-1">

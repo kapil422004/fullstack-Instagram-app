@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import { AvatarImage, Avatar, AvatarFallback } from "./ui/avatar";
 // import { Dialog } from 'radix-ui'
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
-import { MessageCircle, MoreHorizontal, Send } from "lucide-react";
+import {
+  Badge,
+  BadgeCheck,
+  MessageCircle,
+  MoreHorizontal,
+  Send,
+} from "lucide-react";
 // import { Button } from "./ui/button";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { GoBookmark, GoBookmarkFill } from "react-icons/go";
@@ -10,15 +16,17 @@ import CommentDialog from "./ui/CommentDialog";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "sonner";
-import { setPosts, setRefresh } from "@/redux/postSlice";
+import { setPosts } from "@/redux/postSlice";
 
 const Post = ({ post }) => {
+  if (!post) return null;
+  // console.log(posts.map(p => p?._id))
   const [open, setOpen] = useState(false);
-  const { authUser } = useSelector((store) => store.authUser);
+  const { authUser } = useSelector((store) => store.users);
   const backendPostUrl = import.meta.env.VITE_backendPostUrl;
   const dispatch = useDispatch();
   const [text, setText] = useState("");
-  // const { posts } = useSelector((store) => store.posts);
+  const { posts } = useSelector((store) => store.posts);
 
   const deletePostHandler = async () => {
     try {
@@ -26,8 +34,10 @@ const Post = ({ post }) => {
         backendPostUrl + `/delete-post/${post?._id}`,
       );
       if (res.data.success) {
-        dispatch(setRefresh());
         toast.success(res.data.message);
+        const updatePost = posts.filter((p) => p._id !== post._id);
+        dispatch(setPosts(updatePost));
+        // dispatch(setRefresh());
       }
     } catch (error) {
       console.log(error);
@@ -36,26 +46,38 @@ const Post = ({ post }) => {
   };
 
   const likeOrDislikeHandler = async () => {
+    const liked = post.likes.includes(authUser?._id);
     try {
       const res = await axios.put(
         backendPostUrl + `/like-or-dislike-post/${post._id}`,
       );
       toast.success(res.data.message);
-      dispatch(setRefresh());
+      const updatedPost = posts.map((p) => {
+        return post?._id === p?._id
+          ? {
+              ...p,
+              likes: liked
+                ? p.likes.filter((id) => id !== authUser._id)
+                : [...p.likes, authUser._id],
+            }
+          : p;
+      });
+      dispatch(setPosts(updatedPost));
+      // dispatch(setRefresh());
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
     }
   };
 
-    const changeEventHandler = (e) =>{
+  const changeEventHandler = (e) => {
     const inputText = e.target.value;
-    if(inputText.trim()){
-      setText(inputText)
-    }else{
-      setText("")
+    if (inputText.trim()) {
+      setText(inputText);
+    } else {
+      setText("");
     }
-  }
+  };
 
   const addCommentHandler = async () => {
     // console.log("clicked")
@@ -68,7 +90,16 @@ const Post = ({ post }) => {
         console.log(res);
         toast.success(res.data.message);
         setText("");
-        dispatch(setRefresh());
+        const updatePost = posts.map((p) => {
+          return post._id === p._id
+            ? {
+                ...p,
+                comments: [...p.comments, res.data.comment],
+              }
+            : p;
+        });
+        // dispatch(setRefresh());
+        dispatch(setPosts(updatePost));
       }
     } catch (error) {
       console.log(error);
@@ -129,7 +160,7 @@ const Post = ({ post }) => {
 
       <div className="flex items-center justify-between mt-3">
         <div className=" flex items-center gap-3">
-          {post.likes.includes(authUser._id) ? (
+          {post.likes.includes(authUser?._id) ? (
             <FaHeart
               onClick={likeOrDislikeHandler}
               size={"24px"}
@@ -161,14 +192,16 @@ const Post = ({ post }) => {
         {post.caption}
       </p>
 
-      <span
-        className="cursor-pointer text-sm text-gray-500 font-semibold "
-        onClick={() => setOpen(true)}
-      >
-        View all {post.comments.length} comments
-      </span>
+      {post.comments.length > 0 && (
+        <span
+          className="cursor-pointer text-sm text-gray-500 font-semibold "
+          onClick={() => setOpen(true)}
+        >
+          View all {post.comments.length} comments
+        </span>
+      )}
 
-      <CommentDialog open={open} setOpen={setOpen} post={post} />
+      <CommentDialog post={post} open={open} setOpen={setOpen} />
       <div className="flex items-center justify-between">
         <input
           value={text}

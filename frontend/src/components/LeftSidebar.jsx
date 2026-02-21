@@ -19,7 +19,7 @@ import CreatePost from "./CreatePost";
 const LeftSidebar = () => {
   const backendUserUrl = import.meta.env.VITE_backendUserUrl;
   const navigate = useNavigate();
-  const { authUser } = useSelector((store) => store.authUser);
+  const { authUser } = useSelector((store) => store.users);
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
 
@@ -42,6 +42,10 @@ const LeftSidebar = () => {
       logoutHandler();
     } else if (text === "Create") {
       setOpen(true);
+    }else if (text === "Profile") {
+      navigate(`/profile/${authUser?._id}`)
+    }else if (text === "Home") {
+      navigate("/")
     }
   };
 

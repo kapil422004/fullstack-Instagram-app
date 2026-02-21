@@ -3,14 +3,14 @@
 import { setPosts } from "@/redux/postSlice";
 import axios from "axios";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const backendPostUrl = import.meta.env.VITE_backendPostUrl;
 
 const useGetAllPosts = () => {
   const dispatch = useDispatch();
 
-  const { refresh } = useSelector((store) => store.posts);
+  // const { refresh } = useSelector((store) => store.posts);
 
   useEffect(() => {
     const fetchAllPosts = async () => {
@@ -25,7 +25,7 @@ const useGetAllPosts = () => {
       }
     };
     fetchAllPosts();
-  }, [refresh]);
+  }, []);
 };
 
 export default useGetAllPosts;

@@ -3,9 +3,10 @@ import Signup from "./components/Signup";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./components/Login";
 import MainLayout from "./components/MainLayout";
-import { Profile } from "./components/Profile";
+import Profile from "./components/Profile";
 import axios from "axios";
 import Home from "./components/Home";
+import EditProfile from "./components/EditProfile";
 axios.defaults.withCredentials = true;
 
 const browserRouter = createBrowserRouter([
@@ -18,8 +19,12 @@ const browserRouter = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/profile",
+        path: `/profile/:id`,
         element: <Profile />,
+      },
+       {
+        path: `/account/edit`,
+        element: <EditProfile />,
       },
     ],
   },
