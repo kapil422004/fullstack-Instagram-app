@@ -13,7 +13,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setAuthUser } from "@/redux/userSlice";
+import { setAuthUser, setOnlineUsers } from "@/redux/userSlice";
 import CreatePost from "./CreatePost";
 
 const LeftSidebar = () => {
@@ -29,6 +29,7 @@ const LeftSidebar = () => {
       if (res.data.success) {
         toast.success(res.data.message);
         dispatch(setAuthUser(null));
+        dispatch(setOnlineUsers(null));
         navigate("/login");
       }
     } catch (error) {
@@ -46,6 +47,8 @@ const LeftSidebar = () => {
       navigate(`/profile/${authUser?._id}`)
     }else if (text === "Home") {
       navigate("/")
+    }else if (text === "Message") {
+      navigate("/chat")
     }
   };
 

@@ -1,17 +1,18 @@
 import { Conversation } from "../models/conversationModel.js";
 import { Message } from "../models/messageModel.js";
+import { getReciverSocketId, io } from "../socket/socket.js";
 
 export const sendMessage = async (req, res) => {
   try {
     const senderId = req.id;
     const receiverId = req.params.id;
-    const { message } = req.body;
+    const { textMessage: message } = req.body;
 
-    if(!message){
-        return res.status(400).json({
-            success:false,
-            message:"Message field is empty."
-        })
+    if (!message) {
+      return res.status(400).json({
+        success: false,
+        message: "Message field is empty.",
+      });
     }
 
     let conversation = await Conversation.findOne({
@@ -34,6 +35,9 @@ export const sendMessage = async (req, res) => {
     await conversation.save();
 
     //socket implementation
+    const receiverSocketId = getReciverSocketId(receiverId);
+    // console.log(receiverSocketId);
+    io.to(receiverSocketId).emit("newMessage", newMessage)
 
     return res.status(200).json({
       newMessage,
@@ -54,17 +58,16 @@ export const getMessage = async (req, res) => {
     }).populate("messages");
 
     if (!conversation) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: true,
-        messages: [],
+        messages: "[]",
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: conversation?.messages,
+      message: conversation?.messages || [],
     });
-
   } catch (error) {
     console.log(error);
   }

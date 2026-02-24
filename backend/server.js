@@ -6,8 +6,7 @@ import dbconnect from "./utils/dbconnect.js";
 import userRouter from "./routes/userRoutes.js";
 import postRouter from "./routes/postRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
-
-const app = express();
+import { app, server} from "./socket/socket.js";
 
 const PORT = process.env.PORT;
 const allowOrigin = ["http://localhost:5173"];
@@ -31,6 +30,6 @@ app.get("/", (req, res) => {
   return res.send("Hello");
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`App is live on ${PORT}`);
 });
