@@ -61,7 +61,6 @@ export const getAllPost = async (req, res) => {
       .populate({ path: "author", select: "userName profilePicture" })
       .populate({
         path: "comments",
-        sort: { createdAt: -1 },
         populate: { path: "author", select: "userName profilePicture" },
       });
 
@@ -131,7 +130,6 @@ export const likeOrDislikePost = async (req, res) => {
       });
     }
 
-    //socket logic i wrote both like and dis like at one controller 2:53
   } catch (error) {
     console.log(error);
   }

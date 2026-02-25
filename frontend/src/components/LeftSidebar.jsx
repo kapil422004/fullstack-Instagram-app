@@ -13,8 +13,17 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setAuthUser, setOnlineUsers } from "@/redux/userSlice";
+import {
+  setAuthUser,
+  setOnlineUsers,
+  setSelectedUser,
+  setSuggestedUsers,
+  setUserProfile,
+} from "@/redux/userSlice";
 import CreatePost from "./CreatePost";
+import { setMessages } from "@/redux/chatSlice";
+import { setSocket } from "@/redux/socketSlice";
+import { setPosts } from "@/redux/postSlice";
 
 const LeftSidebar = () => {
   const backendUserUrl = import.meta.env.VITE_backendUserUrl;
@@ -29,12 +38,18 @@ const LeftSidebar = () => {
       if (res.data.success) {
         toast.success(res.data.message);
         dispatch(setAuthUser(null));
-        dispatch(setOnlineUsers(null));
+        dispatch(setOnlineUsers([]));
+        dispatch(setSuggestedUsers([]));
+        dispatch(setUserProfile(null));
+        dispatch(setSelectedUser(null));
+        dispatch(setMessages([]));
+        dispatch(setSocket(null));
+        dispatch(setPosts([]));
         navigate("/login");
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.success);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -43,12 +58,12 @@ const LeftSidebar = () => {
       logoutHandler();
     } else if (text === "Create") {
       setOpen(true);
-    }else if (text === "Profile") {
-      navigate(`/profile/${authUser?._id}`)
-    }else if (text === "Home") {
-      navigate("/")
-    }else if (text === "Message") {
-      navigate("/chat")
+    } else if (text === "Profile") {
+      navigate(`/profile/${authUser?._id}`);
+    } else if (text === "Home") {
+      navigate("/");
+    } else if (text === "Message") {
+      navigate("/chat");
     }
   };
 
@@ -67,7 +82,6 @@ const LeftSidebar = () => {
             className="object-cover"
           />
           <AvatarFallback>
-            {" "}
             {authUser?.userName?.[0]?.toUpperCase()}
           </AvatarFallback>
         </Avatar>
@@ -80,7 +94,7 @@ const LeftSidebar = () => {
   return (
     <div className="fixed top-0 z-10 left-0 px-4 border-r border-gray-300 w-[16%] h-screen">
       <div className="flex flex-col">
-        <h1 className="my-8 pl-3 font-bold text-xl">Logo</h1>
+        <img className="mt-8 " src="..\src\assets\instalogo.png" alt="" />
         <div>
           {sidebarItems.map((item, index) => {
             return (
@@ -96,7 +110,7 @@ const LeftSidebar = () => {
           })}
         </div>
       </div>
-      <CreatePost open={open} setOpen={setOpen}/>
+      <CreatePost open={open} setOpen={setOpen} />
     </div>
   );
 };

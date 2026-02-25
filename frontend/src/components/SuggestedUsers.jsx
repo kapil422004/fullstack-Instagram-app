@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import useFollowUser from "@/hooks/useFollowUser";
 
 const SuggestedUsers = () => {
-  const { suggestedUsers } = useSelector((store) => store.users);
+  const { suggestedUsers, authUser } = useSelector((store) => store.users);
   const [showAll, setShowAll] = useState(false);
+  const { followUnfollow } = useFollowUser();
+
   return (
     <div className="my-10">
       <div className="flex items-center justify-between text-sm">
@@ -19,7 +22,8 @@ const SuggestedUsers = () => {
           </span>
         )}
       </div>
-      {(showAll ? suggestedUsers : suggestedUsers.slice(0, 10)).map((user) => {
+      {(showAll ? suggestedUsers : suggestedUsers?.slice(0, 7))?.map((user) => {
+        const isFollowing = authUser?.following?.includes(user._id);
         return (
           <div
             key={user._id}
@@ -44,8 +48,11 @@ const SuggestedUsers = () => {
                 </h1>
               </div>
             </div>
-            <span className="text-[#3BADF8] text-xs font-bold cursor-pointer hover:text-[#3495d6]">
-              Follow
+            <span
+              onClick={() => followUnfollow(user)}
+              className="text-[#3BADF8] text-xs font-bold cursor-pointer hover:text-[#3495d6]"
+            >
+              {isFollowing ? "Unfollow" : "Follow"}
             </span>
           </div>
         );

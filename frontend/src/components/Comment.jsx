@@ -1,4 +1,3 @@
-// import { Avatar } from 'radix-ui'
 import React from "react";
 import { AvatarImage, Avatar, AvatarFallback } from "./ui/avatar";
 

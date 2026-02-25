@@ -1,21 +1,27 @@
 import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import useGetUserProfile from "@/hooks/useGetUserProfile";
-import { Link, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "./ui/button";
 import { Heart, MessageCircle } from "lucide-react";
+// import axios from "axios";
+// import { setAuthUser, setUserProfile } from "@/redux/userSlice";
+import useFollowUser from "@/hooks/useFollowUser";
 
 const Profile = () => {
   const params = useParams();
   const userId = params.id;
   useGetUserProfile(userId);
   const [activeTab, setActiveTab] = useState("posts");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { followUnfollow } = useFollowUser();
 
   const { userProfile, authUser } = useSelector((store) => store.users);
 
   const isLoggedInUserProfile = authUser?._id === userProfile?._id;
-  const isFollowing = false;
+  const isFollowing = authUser?.following?.includes(userProfile?._id);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -32,7 +38,7 @@ const Profile = () => {
             <Avatar className="h-32 w-32">
               <AvatarImage
                 className="object-cover"
-                src={userProfile?.profilePicture}
+                src={userProfile?.profilePicture || null}
                 alt="profilephoto"
               />
               <AvatarFallback className="text-7xl font-bold">
@@ -69,15 +75,28 @@ const Profile = () => {
                   </>
                 ) : isFollowing ? (
                   <>
-                    <Button variant="secondary" className="h-8 cursor-pointer">
+                    <Button
+                      onClick={() => followUnfollow(userProfile)}
+                      variant="secondary"
+                      className="h-8 cursor-pointer"
+                    >
                       Unfollow
                     </Button>
-                    <Button variant="secondary" className="h-8 cursor-pointer">
+                    <Button
+                      onClick={() => {
+                        navigate("/chat");
+                      }}
+                      variant="secondary"
+                      className="h-8 cursor-pointer"
+                    >
                       Message
                     </Button>
                   </>
                 ) : (
-                  <Button className="bg-[#0095F6] hover:bg-[#3192d2] h-8 cursor-pointer">
+                  <Button
+                    onClick={() => followUnfollow(userProfile)}
+                    className="bg-[#0095F6] hover:bg-[#3192d2] h-8 cursor-pointer"
+                  >
                     Follow
                   </Button>
                 )}
@@ -103,7 +122,9 @@ const Profile = () => {
                 </p>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="font-semibold whitespace-pre-wrap">{userProfile?.bio || ""}</span>
+                <span className="font-semibold whitespace-pre-wrap">
+                  {userProfile?.bio || ""}
+                </span>
               </div>
             </div>
           </section>

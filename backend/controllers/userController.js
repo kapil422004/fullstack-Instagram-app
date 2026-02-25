@@ -3,7 +3,6 @@ import { User } from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
-import { Post } from "../models/postModel.js";
 
 export const register = async (req, res) => {
   try {
@@ -71,7 +70,6 @@ export const login = async (req, res) => {
       });
     }
 
-
     const checkPassword = await bcrypt.compare(password, user.password);
 
     if (!checkPassword) {
@@ -92,7 +90,6 @@ export const login = async (req, res) => {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
-
     user = {
       _id: user._id,
       userName: user.userName,
@@ -102,14 +99,13 @@ export const login = async (req, res) => {
       followers: user.followers,
       following: user.following,
       posts: user.posts,
-      //   bookmarks:user.bookmarks
-
-    }
+      bookmarks: user.bookmarks,
+    };
 
     return res.status(200).json({
       success: true,
       message: `Welcome back ${user.userName}`,
-      user
+      user,
     });
   } catch (error) {
     console.log(error);
@@ -134,7 +130,9 @@ export const logout = async (req, res) => {
 export const getProfile = async (req, res) => {
   try {
     const userId = req.params.id;
-    let user = await User.findById(userId).populate({path:"posts", createdAt:-1}).populate("bookmarks")
+    let user = await User.findById(userId)
+      .populate({ path: "posts", createdAt: -1 })
+      .populate("bookmarks");
     return res.status(200).json({
       success: true,
       user,
@@ -146,7 +144,6 @@ export const getProfile = async (req, res) => {
 
 export const editProfile = async (req, res) => {
   try {
-    
     //id from middleware
     const userId = req.id;
     const { bio, gender } = req.body;

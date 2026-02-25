@@ -6,7 +6,6 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import axios from "axios";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Textarea } from "./ui/textarea";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -57,7 +56,10 @@ const CreatePost = ({ open, setOpen }) => {
 
   return (
     <Dialog open={open}>
-      <DialogContent onInteractOutside={() => setOpen(false)}>
+      <DialogContent
+        onInteractOutside={() => setOpen(false)}
+        className="w-[90vw] max-w-[500px] flex flex-col gap-4 p-6"
+      >
         <DialogHeader className="text-center font-bold">
           Create new post.
         </DialogHeader>

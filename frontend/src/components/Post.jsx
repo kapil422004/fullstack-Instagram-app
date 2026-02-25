@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { AvatarImage, Avatar, AvatarFallback } from "./ui/avatar";
-// import { Dialog } from 'radix-ui'
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import {
   Badge,
@@ -17,17 +16,21 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "sonner";
 import { setPosts } from "@/redux/postSlice";
+import { setAuthUser } from "@/redux/userSlice";
+import useFollowUser from "@/hooks/useFollowUser";
 
 const Post = ({ post }) => {
   if (!post) return null;
-  // console.log(posts.map(p => p?._id))
   const [open, setOpen] = useState(false);
   const { authUser } = useSelector((store) => store.users);
   const backendPostUrl = import.meta.env.VITE_backendPostUrl;
   const dispatch = useDispatch();
   const [text, setText] = useState("");
   const { posts } = useSelector((store) => store.posts);
+  const { followUnfollow } = useFollowUser();
+  const isFollowing = authUser?.following?.includes(post?.author?._id);
 
+  // console.log(authUser) //authusr
   const deletePostHandler = async () => {
     try {
       const res = await axios.delete(
@@ -46,27 +49,48 @@ const Post = ({ post }) => {
   };
 
   const likeOrDislikeHandler = async () => {
-    const liked = post.likes.includes(authUser?._id);
     try {
       const res = await axios.put(
         backendPostUrl + `/like-or-dislike-post/${post._id}`,
       );
       toast.success(res.data.message);
+
+      const alreadyLiked = post?.likes?.includes(authUser?._id);
       const updatedPost = posts.map((p) => {
-        return post?._id === p?._id
-          ? {
-              ...p,
-              likes: liked
-                ? p.likes.filter((id) => id !== authUser._id)
-                : [...p.likes, authUser._id],
-            }
-          : p;
+        if (p._id !== post._id) return p;
+
+        const likes = alreadyLiked
+          ? p.likes.filter((id) => id !== authUser._id)
+          : [...p.likes, authUser._id];
+
+        return { ...p, likes };
       });
+
       dispatch(setPosts(updatedPost));
-      // dispatch(setRefresh());
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
+    }
+  };
+
+  const bookmarkHandler = async () => {
+    try {
+      const res = await axios.put(
+        backendPostUrl + `/bookmark-or-remove-bookmark/${post._id}`,
+      );
+      if (res.data.success) {
+        toast.success(res.data.message);
+
+        const alreadyBookmarked = authUser?.bookmarks?.includes(post?._id);
+
+        const updatedBookmarks = alreadyBookmarked
+          ? authUser.bookmarks.filter((id) => id !== post._id)
+          : [...authUser.bookmarks, post._id];
+
+        dispatch(setAuthUser({ ...authUser, bookmarks: updatedBookmarks }));
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -117,7 +141,9 @@ const Post = ({ post }) => {
               alt="post_image"
               className="object-cover"
             />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>
+              {post?.author?.userName?.[0]?.toUpperCase()}
+            </AvatarFallback>
           </Avatar>
           <h1>{post.author.userName}</h1>
         </div>
@@ -125,14 +151,19 @@ const Post = ({ post }) => {
           <DialogTrigger asChild>
             <MoreHorizontal className="cursor-pointer" />
           </DialogTrigger>
-          <DialogContent className="w-100 flex flex-col items-center text-sm text-center ">
-            <div
-              variant="ghost"
-              className="cursor-pointer w-fit text-[#ED4956]     font-bold"
-            >
-              Unfollow
-            </div>
-            <hr className="w-full border-t border-gray-200 " />
+          <DialogContent className="w-[300px] flex flex-col items-center text-sm text-center gap-3 py-5">
+            {post?.author._id !== authUser?._id && (
+              <>
+                <div
+                  onClick={() => followUnfollow(post?.author)}
+                  variant="ghost"
+                  className="cursor-pointer w-fit text-[#ED4956]     font-bold"
+                >
+                  {isFollowing ? "Unfollow" : "Follow"}
+                </div>
+                <hr className="w-full border-t border-gray-200 " />
+              </>
+            )}
             <div variant="ghost" className="cursor-pointer w-fit">
               Add to favorites
             </div>
@@ -160,7 +191,7 @@ const Post = ({ post }) => {
 
       <div className="flex items-center justify-between mt-3">
         <div className=" flex items-center gap-3">
-          {post.likes.includes(authUser?._id) ? (
+          {post?.likes?.includes(authUser?._id) ? (
             <FaHeart
               onClick={likeOrDislikeHandler}
               size={"24px"}
@@ -179,10 +210,19 @@ const Post = ({ post }) => {
           />
           <Send className="cursor-pointer hover:text-gray-600" />
         </div>
-        <GoBookmark
-          size={"24px"}
-          className="cursor-pointer hover:text-gray-600"
-        />
+        {authUser?.bookmarks?.includes(post?._id) ? (
+          <GoBookmarkFill
+            onClick={bookmarkHandler}
+            size={"24px"}
+            className="cursor-pointer hover:text-gray-600"
+          />
+        ) : (
+          <GoBookmark
+            onClick={bookmarkHandler}
+            size={"24px"}
+            className="cursor-pointer hover:text-gray-600"
+          />
+        )}
       </div>
       <span className="font-medium block mb-1 mt-2">
         {post.likes.length} likes

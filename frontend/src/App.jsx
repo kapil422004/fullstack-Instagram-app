@@ -12,12 +12,18 @@ import { io } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import { setOnlineUsers } from "./redux/userSlice.js";
 import { setSocket } from "./redux/socketSlice";
+import ProtectedRoutes from "./components/ProtectedRoutes";
+import NotFound from "./components/NotFound";
 axios.defaults.withCredentials = true;
 
 const browserRouter = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: (
+      <ProtectedRoutes>
+        <MainLayout />
+      </ProtectedRoutes>
+    ),
     children: [
       {
         path: "/",
@@ -45,16 +51,20 @@ const browserRouter = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
 ]);
 
 const App = () => {
   const dispatch = useDispatch();
   const { authUser } = useSelector((store) => store.users);
+  const backendUrl = import.meta.env.VITE_backendUrl;
 
   useEffect(() => {
-    
     if (!authUser?._id) return;
-    const socketio = io("http://localhost:8080");
+    const socketio = io(backendUrl);
 
     dispatch(setSocket(socketio));
 

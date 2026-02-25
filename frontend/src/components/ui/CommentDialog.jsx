@@ -34,7 +34,7 @@ const CommentDialog = ({ post, open, setOpen }) => {
         { text },
       );
       if (res.data.success) {
-        console.log(res);
+        // console.log(res);
         toast.success(res.data.message);
         // setOpen(false)
         setText("");
@@ -59,10 +59,10 @@ const CommentDialog = ({ post, open, setOpen }) => {
     <Dialog open={open}>
       <DialogContent
         onInteractOutside={() => setOpen(false)}
-        className="max-w-5xl p-0 flex flex-col"
+          className="w-[60vw] max-w-5xl p-0 flex flex-col h-[500px]"
       >
-        <div className="flex flex-1">
-          <div className="w-1/2">
+        <div className="flex flex-1 h-[500px] overflow-hidden">
+          <div className="w-1/2 h-[500px] overflow-hidden">
             <img
               src={post.image}
               alt="post_img"
@@ -70,7 +70,8 @@ const CommentDialog = ({ post, open, setOpen }) => {
             />
           </div>
 
-          <div className="w-1/2 flex flex-col justify-between">
+          <div className="w-1/2 flex flex-col justify-between h-[500px] overflow-hidden">
+            {" "}
             <div className="flex items-center justify-between p-4">
               <div className="flex gap-3 items-center">
                 <Link>
@@ -79,30 +80,19 @@ const CommentDialog = ({ post, open, setOpen }) => {
                       src={authUser?.profilePicture}
                       className="object-cover"
                     />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarFallback>
+                      {authUser?.userName[0]?.toUpperCase()}
+                    </AvatarFallback>
                   </Avatar>
                 </Link>
                 <div>
                   <Link className="text-md ">{authUser?.userName} </Link>
                 </div>
               </div>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <MoreHorizontal className="cursor-pointer" />
-                </DialogTrigger>
-                <DialogContent className="w-60 flex flex-col items-center text-sm text-center">
-                  <div className="cursor-pointer w-full text-[#ED4956] font-bold">
-                    Unfollow
-                  </div>
-                  <hr className="w-full border-t border-gray-200 " />
-
-                  <div className="cursor-pointer w-full">Add to favorites</div>
-                </DialogContent>
-              </Dialog>
             </div>
             <hr />
             <div className="flex-1 overflow-y-auto max-h-96 p-4">
-              {post?.comments.map((comment) => (
+              {[...post?.comments].reverse().map((comment) => (
                 <Comment key={comment._id} comment={comment} />
               ))}
             </div>

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import axios from "axios";
 import { toast } from "sonner";
-import Login from "./Login";
 import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { useSelector } from "react-redux";
 axios.defaults.withCredentials = true;
 
 const Signup = () => {
@@ -15,6 +15,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
+  const {authUser} = useSelector((store) => store.users)
 
   const backendUserUrl = import.meta.env.VITE_backendUserUrl;
 
@@ -42,7 +43,11 @@ const Signup = () => {
       setLoading(false);
     }
   };
-
+  useEffect(() => {
+    if(authUser){
+      navigate('/')
+    }
+  },[])
   return (
     <div className="flex items-center w-screen h-screen justify-center">
       <form
@@ -50,7 +55,7 @@ const Signup = () => {
         className="shadow-lg flex flex-col gap-5 p-8 w-90"
       >
         <div className="my-4">
-          <h1 className="text-center font-bold text-xl">LOGO</h1>
+             <img className=" w-72 mb-3 text-center " src="..\src\assets\instalogo.png" alt="" />
           <p className="text-center">
             Sign up to see everyday moments from your close friends.
           </p>

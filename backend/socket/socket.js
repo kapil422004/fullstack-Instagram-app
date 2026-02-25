@@ -33,12 +33,6 @@ io.on("connection", (socket) => {
   });
 
   //listen
-  // socket.on("msg_from_client", (data) => {
-  //   //sending
-  //   // io.to().emit("msg_for_client", data);
-  // });
-
-  //listen
   socket.on("disconnect", () => {
     delete userMap[socket.userId];
     //sending

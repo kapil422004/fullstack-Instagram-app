@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import axios from "axios";
 import { Button } from "./ui/button";
@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Label } from "./ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser } from "@/redux/userSlice";
 import { setPosts } from "@/redux/postSlice";
 axios.defaults.withCredentials = true;
@@ -17,6 +17,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const {authUser} = useSelector((store) => store.users)
 
   const backendUserUrl = import.meta.env.VITE_backendUserUrl;
 
@@ -46,6 +47,12 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    if(authUser){
+      navigate('/')
+    }
+  },[])
+
   return (
     <div>
       <div className="flex items-center w-screen h-screen justify-center">
@@ -54,7 +61,9 @@ const Login = () => {
           className="shadow-lg flex flex-col gap-5 p-8 w-90"
         >
           <div className="my-4">
-            <h1 className="text-center font-bold text-xl">LOGO</h1>
+        
+        <img className=" w-72 mb-5 text-center " src="..\src\assets\instalogo.png" alt="" />
+
             <p className="text-center">
               Login to see everyday moments from your close friends.
             </p>

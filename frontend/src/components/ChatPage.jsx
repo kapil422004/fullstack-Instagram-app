@@ -20,6 +20,8 @@ const ChatPage = () => {
   const backendMessageUrl = import.meta.env.VITE_backendMessageUrl;
   // const isOnline = true
 
+  // console.log(selectedUser);
+
   const sendMessageHandler = async (selectedUserId) => {
     try {
       const res = await axios.post(
@@ -48,7 +50,7 @@ const ChatPage = () => {
         <h1 className="font-bold mb-4 px-3 text-xl">{authUser?.userName}</h1>
         <hr className="mb-4 border-gray-300" />
         <div className="overflow-y-auto h-[80vh]">
-          {suggestedUsers.map((suggestedUser) => { 
+          {suggestedUsers.map((suggestedUser) => {
             const isOnline = onlineUsers.includes(suggestedUser?._id);
             return (
               <div
@@ -57,8 +59,13 @@ const ChatPage = () => {
                 className="flex gap-3 items-center p-3 hover:bg-gray-50 cursor-pointer"
               >
                 <Avatar className="w-14 h-14">
-                  <AvatarImage src={suggestedUser?.profilePicture} />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarImage
+                    className="object-cover"
+                    src={suggestedUser?.profilePicture}
+                  />
+                  <AvatarFallback>
+                    {suggestedUser?.userName?.[0]?.toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
                   <span className="font-medium">{suggestedUser?.userName}</span>
@@ -78,10 +85,15 @@ const ChatPage = () => {
           <div className="flex gap-3 items-center px-3 py-2 border-b border-gray-300 sticky top-0 bg-white z-10">
             <Avatar>
               <AvatarImage
+                className="object-cover"
                 src={selectedUser?.profilePicture || undefined}
                 alt="profile"
               />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>
+                    {selectedUser?.userName?.[0]?.toUpperCase()}
+                
+
+              </AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
               <span>{selectedUser?.userName}</span>

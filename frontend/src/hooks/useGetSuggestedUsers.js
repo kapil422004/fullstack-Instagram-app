@@ -12,8 +12,7 @@ const useGetSuggestedUsers = () => {
       try {
         const res = await axios.get(backendUserUrl + "/get-suggested-users");
         if (res.data.success) {
-          dispatch(setSuggestedUsers(res.data.suggestedUser));
-        }
+dispatch(setSuggestedUsers(res.data.suggestedUser || []));        }
       } catch (error) {
         console.log(error);
       }
