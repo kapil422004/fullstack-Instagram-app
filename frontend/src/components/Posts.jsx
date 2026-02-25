@@ -11,7 +11,7 @@ const Posts = () => {
       {posts
         .filter(
           (post) =>
-            authUser.following.includes(post.author._id) ||
+            authUser?.following?.includes(post?.author?._id) ||
             post?.author?._id === authUser?._id,
         )
         .map((post) => (
