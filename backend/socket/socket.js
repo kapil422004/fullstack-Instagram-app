@@ -7,7 +7,12 @@ const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: ["http://localhost:5173"],
+  cors: [
+    "http://localhost:5173",
+    "https://fullstack-instagram-app.vercel.app",
+    "https://fullstack-instagram-app-git-main-kapil-ishwarkars-projects.vercel.app",
+    "https://fullstack-instagram-9wti9wfrl-kapil-ishwarkars-projects.vercel.app",
+  ],
   methods: ["GET", "POST"],
 });
 

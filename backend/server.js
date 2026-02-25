@@ -6,10 +6,15 @@ import dbconnect from "./utils/dbconnect.js";
 import userRouter from "./routes/userRoutes.js";
 import postRouter from "./routes/postRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
-import { app, server} from "./socket/socket.js";
+import { app, server } from "./socket/socket.js";
 
 const PORT = process.env.PORT;
-const allowOrigin = ["http://localhost:5173"];
+const allowOrigin = [
+  "http://localhost:5173",
+  "https://fullstack-instagram-app.vercel.app",
+  "https://fullstack-instagram-app-git-main-kapil-ishwarkars-projects.vercel.app",
+  "https://fullstack-instagram-9wti9wfrl-kapil-ishwarkars-projects.vercel.app",
+];
 app.use(
   cors({
     origin: allowOrigin,
