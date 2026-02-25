@@ -59,7 +59,7 @@ const CommentDialog = ({ post, open, setOpen }) => {
     <Dialog open={open}>
       <DialogContent
         onInteractOutside={() => setOpen(false)}
-          className="w-[60vw] max-w-5xl p-0 flex flex-col h-[500px]"
+        className="w-[60vw] max-w-5xl p-0 flex flex-col h-[500px]"
       >
         <div className="flex flex-1 h-[500px] overflow-hidden">
           <div className="w-1/2 h-[500px] overflow-hidden">
@@ -77,16 +77,16 @@ const CommentDialog = ({ post, open, setOpen }) => {
                 <Link>
                   <Avatar>
                     <AvatarImage
-                      src={authUser?.profilePicture}
+                      src={post?.author?.profilePicture}
                       className="object-cover"
                     />
                     <AvatarFallback>
-                      {authUser?.userName[0]?.toUpperCase()}
+                      {post?.author?.userName[0]?.toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </Link>
                 <div>
-                  <Link className="text-md ">{authUser?.userName} </Link>
+                  <Link className="text-md ">{post?.author?.userName} </Link>
                 </div>
               </div>
             </div>
