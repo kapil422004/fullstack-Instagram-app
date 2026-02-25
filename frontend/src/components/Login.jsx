@@ -62,7 +62,7 @@ const Login = () => {
         >
           <div className="my-4">
         
-        <img className=" w-72 mb-5 text-center " src="..\src\assets\instalogo.png" alt="" />
+        <img className="mt-8" src="/instalogo.png" alt="Instagram Logo" />
 
             <p className="text-center">
               Login to see everyday moments from your close friends.

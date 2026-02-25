@@ -14,8 +14,8 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate()
-  const {authUser} = useSelector((store) => store.users)
+  const navigate = useNavigate();
+  const { authUser } = useSelector((store) => store.users);
 
   const backendUserUrl = import.meta.env.VITE_backendUserUrl;
 
@@ -32,7 +32,7 @@ const Signup = () => {
       console.log(res);
       if (res.data.success) {
         toast.success(res.data.message);
-        navigate("/login")
+        navigate("/login");
         setUserName("");
         setEmail("");
         setPassword("");
@@ -44,10 +44,10 @@ const Signup = () => {
     }
   };
   useEffect(() => {
-    if(authUser){
-      navigate('/')
+    if (authUser) {
+      navigate("/");
     }
-  },[])
+  }, []);
   return (
     <div className="flex items-center w-screen h-screen justify-center">
       <form
@@ -55,7 +55,7 @@ const Signup = () => {
         className="shadow-lg flex flex-col gap-5 p-8 w-90"
       >
         <div className="my-4">
-             <img className=" w-72 mb-3 text-center " src="..\src\assets\instalogo.png" alt="" />
+          <img className="mt-8" src="/instalogo.png" alt="Instagram Logo" />
           <p className="text-center">
             Sign up to see everyday moments from your close friends.
           </p>
